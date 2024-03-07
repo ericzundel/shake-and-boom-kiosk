@@ -1,5 +1,5 @@
-  https://steamatdrew.weebly.com/georgia-tech-earth-quake.html
-  https://stationview.raspberryshake.org/#/?lat=33.76163&lon=-84.34700&zoom=11.140&sta=R755E&streaming=on
-  https://dataview.raspberryshake.org/#/AM/R755E/00/EHZ?streaming=on
-  https://dataview.raspberryshake.org/#/AM/R755E/00/EHZ
-  https://stationview.raspberryshake.org/#/?lat=15.47241&lon=-14.92133&zoom=2.5&sta=R755#
+https://steamatdrew.weebly.com/georgia-tech-earth-quake.html
+https://stationview.raspberryshake.org/#/?lat=33.76163&lon=-84.34700&zoom=11.140&sta=R755E&streaming=on
+https://dataview.raspberryshake.org/#/AM/R755E/00/EHZ
+https://stationview.raspberryshake.org/#/?lat=15.47241&lon=-14.92133&zoom=2.5&sta=R755#
+https://www.iris.edu/app/eqc/
