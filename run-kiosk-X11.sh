@@ -1,5 +1,11 @@
 ##!/bin/bash
 #
+# This is an older version of the run-kiosk.sh script I wrote when
+# trying to get the kiosk running on a Raspberry Pi 3.  That device just
+# didn't have enough RAM, so I started to use a Raspberry pi 4. The big 
+# difference between the devices is that the RPI3 has X11 installed to 
+# run the display and RPI4 has Wayland.
+#
 # This script is intended to run either from the command line, or from .xsession
 # to run a web browser in full screen mode and then flip through URLs.
 #
