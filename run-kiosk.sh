@@ -6,13 +6,13 @@
 #
 # This script is intended to run either from the command line, or 
 # from  ~/.config/wayfire.ini to run a web browser in full screen 
-# mode.  It launches a web browser and then flips through URLs on each tab.
+# mode and then flip through URLs.
 #
 
 # *EDIT* the number of seconds to wait before switching screens.
 TAB_SWITCH_SECONDS=30
 
-# If you rename this variable to "URLS" you can set the list of URLs in the script.
+# If you rename this variable to "STATIC_URLS" you can set the list of URLs in the script.
 # Otherwise, it tries to load them off of a git repo
 OLDURLS="
   https://steamatdrew.weebly.com/georgia-tech-earth-quake.html
@@ -37,30 +37,44 @@ if [ ! -f $URLFILE ] ; then
     touch $URLFILE
 fi
 
-# Populate the list of URLs from a page on the web
-if [ -z "$URLS" ] ; then
+# Populate the variable URLS as a list of URLs from a page on the web if the $STATIC_URLS variable isn't set
+fetch_urls () {
+  if [ -z "$STATIC_URLS" ] ; then
     TMPURLFILE=`echo /tmp/urls.$$`
     rm -f $TMPURLFILE
-    curl $REPOURLFILE >$TMPURLFILE
-    if cmp -s $TMPURLFILE $URLFILE ; then
-      echo "URLs at $REPOURLFILE have not changed"
-    else
-      echo "URL files has been updated at $REPOURLFILE:"
-      cat $TMPURLFILE
-      cp -f $TMPURLFILE $URLFILE
+
+    # Retry curl a few times in case the network doesn't come up right away
+    for i in 1 2 3 ; do
+      echo "Fetching URLS from $REPOURLFILE. Attempt $i"
+      curl $REPOURLFILE >$TMPURLFILE
+      if [ $? = 0 ] ; then
+        # curl suceeded
+        break
+      else
+	sleep 10
+      fi
+    done
+
+    if [ $? = 0 ] ; then
+      if cmp -s $TMPURLFILE $URLFILE ; then
+        echo "URLs at $REPOURLFILE have not changed"
+      else
+        echo "URL files has been updated at $REPOURLFILE:"
+        cat $TMPURLFILE  # for debugging
+        cp -f $TMPURLFILE $URLFILE
+      fi
     fi
     rm -f $TMPURLFILE
     URLS=`cat $URLFILE`
-fi
-
-echo "Displaying URLS: $URLS"
-
-# Record the start time in seconds since the Unix epoch
-start_time=$(date +%s)
-chromium_pid=999999
+  else
+    URLS=$STATIC_URLS
+  fi
+}
 
 # Launch the web browser
 run_chromium() {
+    fetch_urls
+    echo "Displaying URLS: $URLS"
     echo "Main task is running..."
     echo "Invoking Chromium"
     # I tried --incognito, but the website puts up a bunch of prompts as if we are first time users
@@ -100,13 +114,18 @@ check_time() {
     fi
 }
 
+# Main Body of the Script
+
+# Record the start time in seconds since the Unix epoch 
+start_time=$(date +%s)
+
 run_chromium
 
 export XDG_RUNTIME_DIR=/run/user/1000
 
-# Loop to switch through the open tabs
+# Loop to switch through the open tabs and occasionally restart chromium
 while true; do
-  # Send Ctrl+Tab using `wtype` command for Wayland display system
+  # Send Ctrl+Tab using `wtype` command
   wtype -M ctrl -P Tab
 
   sleep "$TAB_SWITCH_SECONDS"
