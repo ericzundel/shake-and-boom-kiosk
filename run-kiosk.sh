@@ -49,21 +49,19 @@ fetch_urls () {
       curl $REPOURLFILE >$TMPURLFILE
       if [ $? = 0 ] ; then
         # curl suceeded
+        if cmp -s $TMPURLFILE $URLFILE ; then
+          echo "URLs at $REPOURLFILE have not changed"
+        else
+          echo "URL files has been updated at $REPOURLFILE:"
+          cat $TMPURLFILE  # for debugging
+          cp -f $TMPURLFILE $URLFILE
+        fi
         break
       else
 	sleep 10
       fi
     done
 
-    if [ $? = 0 ] ; then
-      if cmp -s $TMPURLFILE $URLFILE ; then
-        echo "URLs at $REPOURLFILE have not changed"
-      else
-        echo "URL files has been updated at $REPOURLFILE:"
-        cat $TMPURLFILE  # for debugging
-        cp -f $TMPURLFILE $URLFILE
-      fi
-    fi
     rm -f $TMPURLFILE
     URLS=`cat $URLFILE`
   else
